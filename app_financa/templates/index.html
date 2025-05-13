@@ -1,0 +1,66 @@
+{% extends 'layout.html' %}
+{% block title %}Resumo Financeiro{% endblock %}
+{% block content %}
+
+<h2 class="mb-4">Resumo</h2>
+<form method="get" class="row mb-4">
+    <div class="col-md-3">
+        <label>Mês</label>
+        <select name="mes" class="form-select">
+            <option value="">Todos</option>
+            {% for m in range(1, 13) %}
+                <option value="{{ m }}" {% if mes and mes|int == m %}selected{% endif %}>{{ m }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label>Ano</label>
+        <input type="number" name="ano" value="{{ ano or '' }}" class="form-control" placeholder="Ex: 2025">
+    </div>
+    <div class="col-md-3 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">Limpar</a>
+    </div>
+</form>
+
+<h4>Saldo Atual: 
+    {% if saldo >= 0 %}
+        <span class="text-success">R$ {{ saldo }}</span>
+    {% else %}
+        <span class="text-danger">R$ {{ saldo }}</span>
+    {% endif %}
+</h4>
+
+<hr>
+
+<h3 class="mt-4">Transações</h3>
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Data</th>
+            <th>Descrição</th>
+            <th>Tipo</th>
+            <th>Valor</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in transacoes %}
+        <tr>
+            <td>{{ t[4] }}</td>
+            <td>{{ t[1] }}</td>
+            <td>
+                {% if t[3] == 'entrada' %}
+                    <span class="text-success">Entrada</span>
+                {% else %}
+                    <span class="text-danger">Saída</span>
+                {% endif %}
+            </td>
+            <td>R$ {{ t[2] }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4">Nenhuma transação encontrada.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
